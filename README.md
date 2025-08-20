@@ -1,2 +1,0 @@
-# judging-app
-judging-app
