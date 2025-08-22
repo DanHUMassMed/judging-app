@@ -5,21 +5,26 @@ import {
   Typography,
   TextField,
   Button,
-  Grid,
-  Link,
   Paper,
   IconButton,
   InputAdornment,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { useSignInProcessor } from "../hooks/useSignInProcessor";
 
 export default function SignIn() {
-  const [showPassword, setShowPassword] = React.useState(false);
-
-  const handleClickShowPassword = () => setShowPassword((prev) => !prev);
-  const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-  };
+  const {
+    email,
+    setEmail,
+    password,
+    setPassword,
+    showPassword,
+    handleClickShowPassword,
+    handleMouseDownPassword,
+    handleSubmit,
+    validationErrors,
+    error,
+  } = useSignInProcessor();
 
   return (
     <Container component="main" maxWidth="xs">
@@ -38,7 +43,7 @@ export default function SignIn() {
           Welcome back
         </Typography>
 
-        <Box component="form" noValidate sx={{ mt: 1, width: "100%" }}>
+        <Box component="form" noValidate sx={{ mt: 1, width: "100%" }} onSubmit={handleSubmit}>
           <TextField
             margin="normal"
             required
@@ -48,16 +53,18 @@ export default function SignIn() {
             name="email"
             autoComplete="email"
             autoFocus
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            error={!!validationErrors.email}
+            helperText={validationErrors.email}
           />
 
-          {/* Right-aligned Forgot password */}
-          <Box textAlign="right" mt={4}>
-            <Link href="reset-password" variant="body2">
-              Forgot password?
-            </Link>
+          <Box textAlign="right" mt={2}>
+            <Typography variant="body2">
+              <a href="/reset-password">Forgot password?</a>
+            </Typography>
           </Box>
 
-          {/* Password with show/hide toggle */}
           <TextField
             margin="normal"
             required
@@ -67,6 +74,10 @@ export default function SignIn() {
             type={showPassword ? "text" : "password"}
             name="password"
             autoComplete="current-password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            error={!!validationErrors.password}
+            helperText={validationErrors.password}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
@@ -83,6 +94,12 @@ export default function SignIn() {
             }}
           />
 
+          {error && (
+            <Typography color="error" variant="body2" mt={1}>
+              {error}
+            </Typography>
+          )}
+
           <Button
             type="submit"
             fullWidth
@@ -93,16 +110,10 @@ export default function SignIn() {
             Sign In
           </Button>
 
-
-
-          {/* Centered Sign Up link */}
           <Box textAlign="center" mt={2}>
-          <Typography variant="body2" align="center">
-            Don’t have an account?{" "}
-            <Link href="/sign-up" underline="hover">
-              Sign Up
-            </Link>
-          </Typography>
+            <Typography variant="body2">
+              Don’t have an account? <a href="/sign-up">Sign Up</a>
+            </Typography>
           </Box>
         </Box>
       </Paper>

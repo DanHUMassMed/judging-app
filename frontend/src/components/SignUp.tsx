@@ -11,11 +11,26 @@ import {
   IconButton,
 } from "@mui/material";
 import { Visibility, VisibilityOff, ArrowBack } from "@mui/icons-material";
+import { useSignUpProcessor } from "../hooks/useSignUpProcessor";
 
 export default function SignUp() {
-  const [showPassword, setShowPassword] = React.useState(false);
-
-  const handleClickShowPassword = () => setShowPassword((show) => !show);
+  const {
+    firstName,
+    setFirstName,
+    lastName,
+    setLastName,
+    organization,
+    setOrganization,
+    email,
+    setEmail,
+    password,
+    setPassword,
+    showPassword,
+    handleClickShowPassword,
+    handleSubmit,
+    validationErrors,
+    error,
+  } = useSignUpProcessor();
 
   return (
     <Container component="main" sx={{ width: 600, maxWidth: "100%" }}>
@@ -42,19 +57,59 @@ export default function SignUp() {
           Create Account
         </Typography>
 
-        <Box component="form" sx={{ mt: 1, width: "100%" }}>
+        <Box component="form" noValidate sx={{ mt: 1, width: "100%" }} onSubmit={handleSubmit}>
           <Stack spacing={2}>
             <Stack direction="row" spacing={2}>
-              <TextField label="First Name" required sx={{ flex: 1 }}/>
-              <TextField label="Last Name" required sx={{ flex: 1 }}/>
+              <TextField
+                id="firstName"
+                label="First Name"
+                required
+                sx={{ flex: 1 }}
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                error={!!validationErrors.firstName}
+                helperText={validationErrors.firstName}
+              />
+              <TextField
+                label="Last Name"
+                required
+                sx={{ flex: 1 }}
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                error={!!validationErrors.lastName}
+                helperText={validationErrors.lastName}
+              />
             </Stack>
-            <TextField label="Organization" required fullWidth />
-            <TextField label="Email" required fullWidth />
+
+            <TextField
+              label="Organization"
+              required
+              fullWidth
+              value={organization}
+              onChange={(e) => setOrganization(e.target.value)}
+              error={!!validationErrors.organization}
+              helperText={validationErrors.organization}
+            />
+
+            <TextField
+              label="Email"
+              required
+              fullWidth
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              error={!!validationErrors.email}
+              helperText={validationErrors.email}
+            />
+
             <TextField
               label="Password"
               type={showPassword ? "text" : "password"}
               required
               fullWidth
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              error={!!validationErrors.password}
+              helperText={validationErrors.password}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
@@ -66,6 +121,12 @@ export default function SignUp() {
               }}
             />
           </Stack>
+
+          {error && (
+            <Typography color="error" variant="body2" mt={1}>
+              {error}
+            </Typography>
+          )}
 
           <Button
             type="submit"
