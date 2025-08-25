@@ -7,18 +7,24 @@ import {
   Button,
   Link,
   Paper,
-  IconButton,
   Stack,
 } from "@mui/material";
 import { ArrowBack } from "@mui/icons-material";
+import { useNavigate, useLocation } from "react-router-dom";
 
-export default function ForgotPassword() {
+export default function ResetPassword() {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [email, setEmail] = React.useState("");
+
+  // Extract error from router state, if any
+  const errorMessage = (location.state as any)?.error || "";
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     console.log("Reset link requested for:", email);
     // TODO: integrate with backend reset password API
+    navigate("/verification-sent", { state: { from: "reset", email } });
   };
 
   return (
@@ -37,13 +43,19 @@ export default function ForgotPassword() {
           flexDirection: "column",
         }}
       >
+        {errorMessage ? (
+          <Typography component="h1" variant="h5" gutterBottom>
+            Reset Password
+          </Typography>
+        ):(
+          <>
         {/* Back button */}
         <Box mb={2} display="flex" alignItems="center">
           <Link href="/sign-in" underline="none" sx={{ ml: 1, fontWeight: 500 }}>
             <Stack direction="row" alignItems="center" spacing={1}>
               <ArrowBack sx={{ fontSize: 18 }} />
               <Typography variant="body2" gutterBottom>
-                  Go Back
+                Go Back
               </Typography>
             </Stack>
           </Link>
@@ -53,9 +65,19 @@ export default function ForgotPassword() {
         <Typography component="h1" variant="h5" gutterBottom>
           Forgot your password?
         </Typography>
+          </>
+        )}
+
         <Typography variant="body2" color="textSecondary" mb={3}>
           To reset your password, please enter the email address used while signing up.
         </Typography>
+
+        {/* Error display */}
+        {errorMessage && (
+          <Typography color="error" variant="body2" mb={2}>
+            ❌ {errorMessage}
+          </Typography>
+        )}
 
         {/* Form */}
         <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>

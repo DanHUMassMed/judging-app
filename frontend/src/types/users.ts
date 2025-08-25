@@ -10,17 +10,27 @@ export interface UserLookupResponse {
   is_verified?: boolean;
   role?: string;
 }
-export interface UserResponse {
-  id?: number;
+
+export interface UserCreateRequest {
   first_name?: string;
   last_name?: string;
   email?: string;
   password?: string;
-  is_verified?: boolean;
-  verification_token?: string;
-  magic_link_token?: string;
-  magic_link_expires_at?: string;   // use string for ISO datetime (from API)
-  registered_at?: string;
-  last_login_at?: string;
+  organization?: string;
+}
+
+export interface UserResponse {
+  id?: number;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  password?: string;
+  organization?: string;
+  isVerified?: boolean;
+  verificationToken?: string;
+  magicLinkToken?: string;
+  magicLinkExpiresAt?: string;   
+  registeredAt?: string;
+  lastLoginAt?: string;
   role?: string;
 }

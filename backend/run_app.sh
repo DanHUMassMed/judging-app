@@ -14,6 +14,12 @@ get_port_in_use() {
     lsof -i :${port} | grep LISTEN|grep IPv4| awk '{print $2}' | xargs
 }
 
+# Returns the PID(s) of a running process matching the given search string
+get_process_id() {
+    local search_process="$1"
+    ps auxww | grep "$search_process" | grep -v grep | awk '{print $2}' | xargs
+}
+
 stop() {
 	if [ -n "${PROCESS_ID}" ]; then
       echo "Stopping ${PROCESS_NAME} with PID:[${PROCESS_ID}]"

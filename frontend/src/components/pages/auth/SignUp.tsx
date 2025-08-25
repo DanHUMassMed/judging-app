@@ -11,7 +11,7 @@ import {
   IconButton,
 } from "@mui/material";
 import { Visibility, VisibilityOff, ArrowBack } from "@mui/icons-material";
-import { useSignUpProcessor } from "../hooks/useSignUpProcessor";
+import { useSignUpProcessor } from "../../../hooks/useSignUpProcessor";
 
 export default function SignUp() {
   const {

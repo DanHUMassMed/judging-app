@@ -3,6 +3,10 @@ import type { ReactNode } from "react";
 import axios from "axios";
 import type { AxiosInstance } from "axios";
 
+const BASE_URL = import.meta.env.VITE_FASTAPI_BASE_URL || '';
+const API_VERSION = import.meta.env.VITE_API_VERSION_STR || '';
+
+
 interface AuthContextType {
   accessToken: string | null;
   login: (email: string, password: string) => Promise<void>;
@@ -23,7 +27,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   // Create authenticated axios instance
   const api = useMemo(() => {
     const instance = axios.create({
-      baseURL: 'http://localhost:8000',
+      baseURL: `${BASE_URL}${API_VERSION}`,
     });
 
     // Add request interceptor
@@ -74,7 +78,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setIsLoading(true); // Set loading during login
     try {
       const resp = await axios.post(
-        "http://localhost:8000/auth/login",
+        `${BASE_URL}${API_VERSION}/auth/login`,
         { email, password },
         { withCredentials: true }
       );
@@ -97,7 +101,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     try {
       console.log("🔄 Attempting token refresh...");
       const resp = await axios.post(
-        "http://localhost:8000/auth/refresh",
+        `${BASE_URL}${API_VERSION}/auth/refresh`,
         {},
         { withCredentials: true }
       );
@@ -116,7 +120,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setAccessToken(null);
     setIsLoading(false);
     // Optionally call backend logout endpoint to clear cookie
-    axios.post("http://localhost:8000/auth/logout", {}, { withCredentials: true });
+    axios.post(`${BASE_URL}${API_VERSION}/auth/logout`, {}, { withCredentials: true });
   };
 
   // --- Try to refresh token on first load ---

@@ -1,14 +1,14 @@
 import { apiRequest } from "./apiRequestUtil.js";
-import type { UserLookupRequest, UserLookupResponse } from "../types";
+import type { UserResponse, UserCreate } from "../types";
 
 // Example: typed enrichment
-export const analyze_and_visualize_enrichment = async (
-  userLookupRequest: UserLookupRequest
-): Promise<UserLookupResponse> => {
-  return apiRequest<UserLookupResponse>(
+export const registerUser = async (
+  userCreate: UserCreate
+): Promise<UserResponse> => {
+  return apiRequest<UserResponse>(
     "post",
     `/authenticate_user`,
-    userLookupRequest
+    userCreate
   );
 };
 

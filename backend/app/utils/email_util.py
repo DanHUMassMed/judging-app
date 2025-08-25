@@ -19,7 +19,8 @@ logger.setLevel(logging.DEBUG)
 SMTP_SERVER  = os.getenv('SMTP_SERVER')
 SMTP_LOGIN   = os.getenv('SMTP_LOGIN')
 SMTP_PASSWD  = os.getenv('SMTP_PASSWD')
-REDIRECT_URL = os.getenv('REDIRECT_URL')
+REACT_APP_URL = os.getenv('REACT_APP_URL')
+API_VERSION_STR = os.getenv('API_VERSION_STR')
 
 
 def email_results(receiver, the_file, message_text=None):
@@ -39,28 +40,23 @@ def email_results(receiver, the_file, message_text=None):
     message = construct_message_with_attachment(subject, sender, receiver, message_text, the_file)
     send_message_ssl(sender, receiver, message)
 
-def email_verification(receiver, verification_token, first_name):
-    subject = 'Verify your email'
-    sender = "llm_researcher@gmail.com"
+def send_email_verification(receiver, verification_token, first_name):
+    subject = 'Please Verify your email'
+    sender = "judging_app@gmail.com"
+    redirect_url = f"{REACT_APP_URL}/verify/{verification_token}"
     
-    message_html = f"""
-    <html>
-        <body>
-            <h1>Verify Your Email</h1>
-            <p>Dear { first_name },</p>
-            <p>Thank you for registering! Please click the verification button below to activate your account.</p>
-            <div>
-                <a href="{REDIRECT_URL}/verify/{verification_token}" target="_blank">
-                <button style="background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">
-                    Verify Email
-                </button>
-                </a>
-            </div>
-            <p>Best regards,</p>
-            <p>Dan</p>
-        </body>
-    </html>
-    """
+    message_html = VERIFICATION_MESSAGE.format(first_name=first_name, redirect_url=redirect_url)
+    
+    message = construct_message_with_html(subject, sender, receiver, message_html=message_html)
+    send_message_ssl(sender, receiver, message)
+
+def send_magic_link(receiver, verification_token, first_name):
+    subject = 'Please Verify your email'
+    sender = "judging_app@gmail.com"
+    redirect_url = f"{REACT_APP_URL}/verify/{verification_token}"
+    
+    message_html = MAGIC_LINK_MESSAGE.format(first_name=first_name, redirect_url=redirect_url)
+    
     message = construct_message_with_html(subject, sender, receiver, message_html=message_html)
     send_message_ssl(sender, receiver, message)
 
@@ -209,9 +205,104 @@ def send_message_ssl(sender, receiver, message):
         logging.debug("SMTP sent to: {}".format(receiver))
 
 
-if __name__ == "__main__":
-    # Test Email verification
-    receiver="dphiggins@gmail.com"
-    verification_token="19953b29c9094280a1d46b39cc3d86a6"
-    first_name="Dan"
-    email_verification(receiver, verification_token, first_name)
+VERIFICATION_MESSAGE = """
+<html>
+  <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; background-color: #f9f9f9; padding: 20px;">
+    <div style="max-width: 600px; margin: auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); padding: 30px;">
+      
+      <!-- Header / Logo -->
+      <h1 style="color:#09a1ec; text-align: center;">Welcome to Judging App!</h1>
+
+      <!-- Greeting -->
+      <p>Dear {first_name},</p>
+
+      <!-- Welcome message -->
+      <p>
+        We’re thrilled to have you join us! 
+        To get started, please verify your email by clicking the button below.
+      </p>
+
+      <!-- Call-to-action button -->
+      <div style="text-align: center; margin: 30px 0;">
+        <a href="{redirect_url}" target="_blank" 
+           style="display: inline-block; background-color: #09a1ec; color: white; text-decoration: none; 
+                  padding: 12px 25px; border-radius: 5px; font-weight: bold;">
+          Verify Email
+        </a>
+      </div>
+
+      <!-- Fallback link -->
+      <p>If the button above doesn’t work, copy and paste the following link into your browser:</p>
+      <p style="word-break: break-all;">
+        <a href="{redirect_url}" style="color:#09a1ec;">{redirect_url}</a>
+      </p>
+
+      <!-- Closing / signature -->
+      <p>
+        Once verified, you can start creating and managing events.
+      </p>
+
+      <p>Best regards,<br>Dan</p>
+
+      <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
+
+      <!-- Footer / support -->
+      <p style="font-size: 12px; color: #999; text-align: center;">
+        If you did not sign up for this account, please ignore this email or contact our support team.
+      </p>
+
+    </div>
+  </body>
+</html>
+"""
+
+MAGIC_LINK_MESSAGE = """
+<html>
+  <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; background-color: #f9f9f9; padding: 20px;">
+    <div style="max-width: 600px; margin: auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); padding: 30px;">
+      
+      <!-- Header / Logo -->
+      <h1 style="color:#09a1ec; text-align: center;">Welcome to MAGIC LINK for the Judging App!</h1>
+
+      <!-- Greeting -->
+      <p>Dear {first_name},</p>
+
+      <!-- Welcome message -->
+      <p>
+        ✨ Your Magic Link is ready! Click it to instantly regain full access. 
+        And for the next 15 minutes, you can even update your password without any extra steps.
+      </p>
+
+      <!-- Call-to-action button -->
+      <div style="text-align: center; margin: 30px 0;">
+        <a href="{redirect_url}" target="_blank" 
+           style="display: inline-block; background-color: #09a1ec; color: white; text-decoration: none; 
+                  padding: 12px 25px; border-radius: 5px; font-weight: bold;">
+          Get Connected Now
+        </a>
+      </div>
+
+      <!-- Fallback link -->
+      <p>If the button above doesn’t work, copy and paste the following link into your browser:</p>
+      <p style="word-break: break-all;">
+        <a href="{redirect_url}" style="color:#09a1ec;">{redirect_url}</a>
+      </p>
+
+      <!-- Closing / signature -->
+      <p>
+        Once verified, you can start creating and managing events.
+      </p>
+
+      <p>Best regards,<br>Dan</p>
+
+      <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
+
+      <!-- Footer / support -->
+      <p style="font-size: 12px; color: #999; text-align: center;">
+        If you did not request this link, please ignore this email or contact our support team.
+      </p>
+
+    </div>
+  </body>
+</html>
+"""

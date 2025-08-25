@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useFieldValidation } from "./useFieldValidation";
+import {toSnakeCase, toCamelCase} from "../utils/caseUtils";
+import type { UserCreateRequest, UserResponse } from "../types";
 
 export const useSignUpProcessor = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -64,14 +66,18 @@ export const useSignUpProcessor = () => {
     if (hasError) return;
 
     try {
+      const payload = toSnakeCase<UserCreateRequest>({ firstName, lastName, organization, email, password });
+      
       const response = await axios.post(
-        "http://localhost:8000/auth/register",
-        { firstName, lastName, organization, email, password },
+        "http://localhost:8000/api/v1/auth/register",
+        payload,
         { withCredentials: true }
       );
 
       setAccessToken(response.data.access_token);
-      navigate("/pricing");
+      const user = toCamelCase<UserResponse>(response.data.user);
+      console.log("Registered user:", user);
+      navigate("/verification-sent", { state: { from: "sign-up", email } });
     } catch (err: any) {
       console.error(err);
       setError(err.response?.data?.detail || "Registration failed");

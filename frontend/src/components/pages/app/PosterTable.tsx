@@ -6,7 +6,7 @@ import { Snackbar, Alert } from "@mui/material";
 import { TextField, IconButton } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
-import { useAuth } from './AuthContext';
+import { useAuth } from '../auth/AuthContext';
 
 export default function PosterTable() {
   const { api, isAuthenticated } = useAuth();
@@ -27,14 +27,14 @@ const handleRowUpdate = async (newRow: any, oldRow: any) => {
   }
    
   // ✅ Only send update if valid
-  await axios.put(`http://localhost:8000/posters/${newRow.id}`, newRow);
+  await axios.put(`http://localhost:8000/api/v1/posters/${newRow.id}`, newRow);
   return newRow;
 };
 
   // Handle delete
   const handleDelete = async (id: number) => {
     try {
-      await axios.delete(`http://localhost:8000/posters/${id}`);
+      await axios.delete(`http://localhost:8000/api/v1/posters/${id}`);
       setRows((prev) => prev.filter((row) => row.id !== id));
     } catch (err: any) {
       console.error(err);

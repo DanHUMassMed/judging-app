@@ -1,0 +1,62 @@
+    <html>
+    <style>
+        .container {{
+            display: table;
+            width: 100%;
+            border-collapse: collapse;
+        }}
+
+        .row {{
+            display: table-row;
+        }}
+
+        .cell {{
+            display: table-cell;
+            padding: 8px;
+            border: 1px solid #ccc;
+        }}
+
+        .label {{
+            font-weight: bold;
+        }}
+    </style>
+        <body>
+            <h1>Reset your password</h1>
+            <p>Dear { first_name },</p>
+            <p>You are receiving this email as there has been a request to reset your password.</p>
+            <div>
+                <a href="{REDIRECT_URL}/reset-password/{verification_token}" target="_blank">
+                <button style="background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">
+                    Reset Password
+                </button>
+                </a>
+            </div>
+            <div>
+            <p>The request came from the following location. If this was not you, you can safely ignore this email.</p>
+            </div>
+            <div class="container">
+                <div class="row">
+                    <div class="cell label">IP</div>
+                    <div class="cell value">{reqesting_ip}</div>
+                </div>
+                <div class="row">
+                    <div class="cell label">Time</div>
+                    <div class="cell value">{request_time}</div>
+                </div>
+                <div class="row">
+                    <div class="cell label">City</div>
+                    <div class="cell value">{geolocation['city']}</div>
+                </div>
+                <div class="row">
+                    <div class="cell label">Region</div>
+                    <div class="cell value">{geolocation['region']}</div>
+                </div>
+                <div class="row">
+                    <div class="cell label">Country</div>
+                    <div class="cell value">{geolocation['country']}</div>
+                </div>
+            </div>
+            <p>Thanks,</p>
+            <p>Dan</p>
+        </body>
+    </html>

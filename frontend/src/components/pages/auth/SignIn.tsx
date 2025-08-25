@@ -10,7 +10,7 @@ import {
   InputAdornment,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { useSignInProcessor } from "../hooks/useSignInProcessor";
+import { useSignInProcessor } from "../../../hooks/useSignInProcessor";
 
 export default function SignIn() {
   const {
