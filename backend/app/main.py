@@ -12,7 +12,6 @@ load_dotenv()
 REACT_APP_URL = os.getenv("REACT_APP_URL")
 API_VERSION_STR = os.getenv("API_VERSION_STR", "/api/v1")
 
-
 logger = logging.getLogger()
 logger.setLevel(os.getenv("LOG_LEVEL", "WARNING").upper())
 

@@ -16,11 +16,11 @@ load_dotenv()
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 
-SMTP_SERVER  = os.getenv('SMTP_SERVER')
-SMTP_LOGIN   = os.getenv('SMTP_LOGIN')
-SMTP_PASSWD  = os.getenv('SMTP_PASSWD')
-REACT_APP_URL = os.getenv('REACT_APP_URL')
-API_VERSION_STR = os.getenv('API_VERSION_STR')
+SMTP_SERVER  = os.getenv('SMTP_SERVER',"")
+SMTP_LOGIN   = os.getenv('SMTP_LOGIN',"")
+SMTP_PASSWD  = os.getenv('SMTP_PASSWD',"")
+REACT_APP_URL = os.getenv('REACT_APP_URL',"")
+API_VERSION_STR = os.getenv('API_VERSION_STR',"")
 
 
 def email_results(receiver, the_file, message_text=None):
@@ -60,10 +60,10 @@ def send_magic_link(receiver, verification_token, first_name):
     message = construct_message_with_html(subject, sender, receiver, message_html=message_html)
     send_message_ssl(sender, receiver, message)
 
-def reset_password_email(receiver, verification_token, first_name, reqesting_ip):
+def reset_password_email(receiver, verification_token, first_name, requesting_ip):
     now = datetime.now()
     request_time = now.strftime("%b %d %Y %I:%M:%S %p")
-    geolocation = get_geolocation(reqesting_ip)
+    geolocation = get_geolocation(requesting_ip)
         
     subject = 'Reset Password Request'
     sender = "llm_researcher@gmail.com"
@@ -96,7 +96,7 @@ def reset_password_email(receiver, verification_token, first_name, reqesting_ip)
             <p>Dear { first_name },</p>
             <p>You are receiving this email as there has been a request to reset your password.</p>
             <div>
-                <a href="{REDIRECT_URL}/reset-password/{verification_token}" target="_blank">
+                <a href="REDIRECT_URL/reset-password/{verification_token}">
                 <button style="background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">
                     Reset Password
                 </button>
@@ -108,7 +108,7 @@ def reset_password_email(receiver, verification_token, first_name, reqesting_ip)
             <div class="container">
                 <div class="row">
                     <div class="cell label">IP</div>
-                    <div class="cell value">{reqesting_ip}</div>
+                    <div class="cell value">{requesting_ip}</div>
                 </div>
                 <div class="row">
                     <div class="cell label">Time</div>
@@ -224,15 +224,15 @@ VERIFICATION_MESSAGE = """
 
       <!-- Call-to-action button -->
       <div style="text-align: center; margin: 30px 0;">
-        <a href="{redirect_url}" target="_blank" 
+        <a href="{redirect_url}"
            style="display: inline-block; background-color: #09a1ec; color: white; text-decoration: none; 
                   padding: 12px 25px; border-radius: 5px; font-weight: bold;">
-          Verify Email
+          Verify Your Email
         </a>
       </div>
 
       <!-- Fallback link -->
-      <p>If the button above doesn’t work, copy and paste the following link into your browser:</p>
+      <p>If the button above doesn’t work, copy and paste the following link into your browser</p>
       <p style="word-break: break-all;">
         <a href="{redirect_url}" style="color:#09a1ec;">{redirect_url}</a>
       </p>
@@ -275,7 +275,7 @@ MAGIC_LINK_MESSAGE = """
 
       <!-- Call-to-action button -->
       <div style="text-align: center; margin: 30px 0;">
-        <a href="{redirect_url}" target="_blank" 
+        <a href="{redirect_url}"
            style="display: inline-block; background-color: #09a1ec; color: white; text-decoration: none; 
                   padding: 12px 25px; border-radius: 5px; font-weight: bold;">
           Get Connected Now

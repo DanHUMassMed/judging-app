@@ -21,7 +21,7 @@ export default function SignIn() {
     showPassword,
     handleClickShowPassword,
     handleMouseDownPassword,
-    handleSubmit,
+    handleSignInSubmit,
     validationErrors,
     error,
   } = useSignInProcessor();
@@ -43,7 +43,7 @@ export default function SignIn() {
           Welcome back
         </Typography>
 
-        <Box component="form" noValidate sx={{ mt: 1, width: "100%" }} onSubmit={handleSubmit}>
+        <Box component="form" noValidate sx={{ mt: 1, width: "100%" }} onSubmit={handleSignInSubmit}>
           <TextField
             margin="normal"
             required

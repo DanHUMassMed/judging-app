@@ -27,7 +27,7 @@ export default function SignUp() {
     setPassword,
     showPassword,
     handleClickShowPassword,
-    handleSubmit,
+    handleSignUpSubmit,
     validationErrors,
     error,
   } = useSignUpProcessor();
@@ -57,7 +57,7 @@ export default function SignUp() {
           Create Account
         </Typography>
 
-        <Box component="form" noValidate sx={{ mt: 1, width: "100%" }} onSubmit={handleSubmit}>
+        <Box component="form" noValidate sx={{ mt: 1, width: "100%" }} onSubmit={handleSignUpSubmit}>
           <Stack spacing={2}>
             <Stack direction="row" spacing={2}>
               <TextField

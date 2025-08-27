@@ -25,7 +25,7 @@ export const useSignUpProcessor = () => {
   const isValidEmail = (email: string): boolean =>
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-  const handleSubmit = async (event: React.FormEvent) => {
+  const handleSignUpSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setError("");
     resetValidationErrors();
@@ -97,7 +97,7 @@ export const useSignUpProcessor = () => {
     setPassword,
     showPassword,
     handleClickShowPassword,
-    handleSubmit,
+    handleSignUpSubmit,
     validationErrors,
     error,
   };

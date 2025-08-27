@@ -8,6 +8,8 @@ from app.schemas.user import UserCreate, UserRead
 from app.utils.email_util import send_email_verification, send_magic_link
 import re
 from dateutil import parser
+from app.utils.jwt_util import create_token, decode_token
+
 
 
 pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
@@ -39,7 +41,12 @@ class AuthService:
             raise ValueError(f"This Email ({user_data.email}) is already registered. Please log in or use a different email.")
 
         hashed_password = pwd_context.hash(user_data.password) if user_data.password else None
-        verification_token = self._generate_token()
+
+        verification_token = create_token(
+            subject= user_data.first_name,
+            email=user_data.email,
+            expires_delta=timedelta(minutes=self.MAGIC_LINK_EXPIRY_MINUTES),
+            token_type="magic-link")
 
         user = UserModel(
             first_name = user_data.first_name,
@@ -81,9 +88,29 @@ class AuthService:
         )
 
         if not found_user:
-            raise ValueError("Invalid or expired verification link. Please reset your password to generate a new link.")
+            # If we don't find a user with that token the user may have already verified
+            # so we decode the token to get the email and check if that user is verified
+            
+            token_payload = decode_token(magic_link_token)  # Will raise ValueError if invalid
+            token_payload_type = token_payload.get("token_type")
+            if token_payload_type != "magic-link":
+                raise ValueError("Invalid token type")
+            
+            email = token_payload.get("email")
+            found_user = self.db.query(UserModel).filter(UserModel.email == email).first()
+            if found_user and found_user.is_verified:
+                expires_at_ts = token_payload.get("exp",0)
+                dt_utc = datetime.fromtimestamp(expires_at_ts, tz=timezone.utc)
+                # We still define expires_at_str 
+                # The user can use this token multiple time until it expires with out any issue
+                expires_at_str = dt_utc.isoformat(timespec="microseconds").replace("+00:00", "Z")
+            else:
+                # If we still can't find a verified user, the token is invalid
+                raise ValueError("Invalid or expired verification link. Please reset your password to generate a new link.")        
+        else:
+            expires_at_str = found_user.magic_link_expires_at
 
-        expires_at_str = found_user.magic_link_expires_at
+        
         expires_at = parser.parse(expires_at_str) if expires_at_str else None
 
         now = datetime.now(timezone.utc)
@@ -146,8 +173,12 @@ class AuthService:
             raise ValueError("User not found")
 
         # Generate a secure random token
-        token = self._generate_token()
-        
+        token = create_token(
+            subject= user.first_name,
+            email=user.email,
+            expires_delta=timedelta(minutes=self.MAGIC_LINK_EXPIRY_MINUTES),
+            token_type="magic-link")
+                
         # Set token and expiry
         user.magic_link_token = token
         user.magic_link_expires_at = self._generate_timestamp_str(minutes=self.MAGIC_LINK_EXPIRY_MINUTES)
@@ -191,9 +222,6 @@ class AuthService:
     # ---------------------------
     # Internal helpers
     # ---------------------------
-    def _generate_token(self, length: int = 32) -> str:
-        import secrets
-        return secrets.token_urlsafe(length)
     
     def _generate_timestamp_str(self, minutes: int = 0) -> str:
         now_dt=datetime.now(timezone.utc) + timedelta(minutes=minutes)

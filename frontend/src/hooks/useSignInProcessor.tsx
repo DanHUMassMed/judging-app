@@ -23,7 +23,7 @@ export const useSignInProcessor = () => {
   const isASCII = (text: string): boolean => /^[\x09\x0A\x0D\x20-\x7E]*$/.test(text);
   const isValidEmail = (email: string): boolean => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-  const handleSubmit = async (event: React.FormEvent) => {
+  const handleSignInSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setError("");
     resetValidationErrors();
@@ -60,7 +60,7 @@ export const useSignInProcessor = () => {
   // Navigate after login when isAuthenticated updates
   useEffect(() => {
     if (loginSubmitted && isAuthenticated) {
-      navigate("/pricing");
+      navigate("/posters");
     }
   }, [isAuthenticated, loginSubmitted, navigate]);
 
@@ -72,7 +72,7 @@ export const useSignInProcessor = () => {
     showPassword,
     handleClickShowPassword,
     handleMouseDownPassword,
-    handleSubmit,
+    handleSignInSubmit,
     validationErrors,
     error,
   };

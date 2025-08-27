@@ -120,7 +120,7 @@ def test_verify_success(db_session):
 def test_verify_invalid_token(db_session):
     """Invalid token should raise."""
     service = AuthService(db_session)
-    with pytest.raises(ValueError, match="Invalid or expired verification link"):
+    with pytest.raises(ValueError, match="Invalid token. Please reset your password to generate a new link."):
         service.verify("doesnotexist")
 
 

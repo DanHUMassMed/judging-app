@@ -9,6 +9,7 @@ import SignIn from "./components/pages/auth/SignIn";
 import SignUp from "./components/pages/auth/SignUp";
 import ResetPassword from "./components/pages/auth/ResetPassword";
 import VerifyAccount from "./components/pages/auth/VerifyAccount";
+import VerifiedSuccess from "./components/pages/auth/VerifiedSuccess";
 import Pricing from "./components/pages/public/Pricing";
 import PosterTable from "./components/pages/app/PosterTable";
 import { Outlet } from "react-router-dom";
@@ -61,16 +62,14 @@ function AppRouter() {
         <Route path="/sign-up"           element={<Layout><SignUp /></Layout>} />
         <Route path="/reset-password"    element={<Layout><ResetPassword /></Layout>} />
         <Route path="/verification-sent" element={<Layout><VerificationSent /></Layout>} />
+        <Route path="/verified-success"  element={<VerifiedSuccess />} />
         <Route path="/verify/:token"     element={<VerifyAccount />} />
         <Route path="/magic-link/:token" element={<VerifyAccount />} />
         <Route path="/pricing"           element={<Layout><Pricing /></Layout>} />
 
         {/* Protected routes */}
         <Route element={<ProtectedRoute />}>
-          <Route
-            path="/posters"
-            element={<Layout><PosterTable /></Layout>}
-          />
+          <Route path="/posters" element={<Layout><PosterTable /></Layout>} />
         </Route>
         {/* Catch-all redirect */}
         <Route path="*" element={<Navigate to="/" />} />
